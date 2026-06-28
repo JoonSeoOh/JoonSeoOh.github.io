@@ -1,3 +1,5 @@
+# git add . ; git commit -m "Write new post" ; git push origin main
+
 # The Site Configuration
 
 # Import the theme
