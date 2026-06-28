@@ -4,54 +4,45 @@
 theme: jekyll-theme-chirpy
 
 # The language of the webpage › http://www.lingoes.net/en/translator/langcode.htm
-# If it has the same name as one of the files in folder `_data/locales`, the layout language will also be changed,
-# otherwise, the layout language will use the default value of 'en'.
-lang: ko # 한국어 서비스에 맞게 ko로 변경합니다.
+lang: ko
 
 # Change to your timezone › https://zones.arilyn.cc
-timezone: Asia/Seoul # 대한민국 시간대로 설정합니다.
+timezone: Asia/Seoul
 
-# jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
+# jekyll-seo-tag settings
 # ↓ --------------------------
 
-title: JoonSeo's DevLog # 블로그 메인 타이틀
+title: JoonSeo's DevLog
 
-tagline: AI & Software Engineering # 타이틀 밑에 들어갈 한 줄 소개 문구
+tagline: AI & Software Engineering
 
-description: >- # 검색 엔진 노출용 블로그 설명
+description: >-
   인공지능 연구 및 소프트웨어 개발 기록을 담은 기술 블로그입니다.
 
-# Fill in the protocol & hostname for your site.
-# E.g. 'https://username.github.io', note that it does not end with a '/'.
-url: "https://JoonSeoOh.github.io" # 블로그 실제 주소로 연결합니다.
+# 주소를 전체 소문자로 안전하게 변경합니다.
+url: "https://joonseooh.github.io"
 
 github:
-  username: JoonSeoOh # 깃허브 아이디로 연동합니다.
+  username: JoonSeoOh
 
 twitter:
-  username: # 트위터를 쓰지 않는다면 비워둡니다.
+  username:
 
 social:
-  # Change to your full name.
-  # It will be displayed as the default author of the posts and the copyright owner in the Footer
   name: JoonSeoOh
-  email: joonseo@example.com # 본인의 실제 이메일 주소로 수정하셔도 됩니다.
-  fediverse_handle: # 비워둠
+  email: joonseo@example.com
+  fediverse_handle:
   links:
-    # The first element serves as the copyright owner's link
-    - https://github.com/JoonSeoOh # 하단 첫 번째 링크 아이콘 (깃허브 프로필)
-    # Uncomment below to add more social links
-    # - https://www.facebook.com/username
-    # - https://www.linkedin.com/in/username
+    - https://github.com/JoonSeoOh
 
 # Site Verification Settings
 webmaster_verifications:
-  google: # fill in your Google verification code
-  bing: # fill in your Bing verification code
-  alexa: # fill in your Alexa verification code
-  yandex: # fill in your Yandex verification code
-  baidu: # fill in your Baidu verification code
-  facebook: # fill in your Facebook verification code
+  google:
+  bing:
+  alexa:
+  yandex:
+  baidu:
+  facebook:
 
 # ↑ --------------------------
 # The end of `jekyll-seo-tag` settings
@@ -59,107 +50,72 @@ webmaster_verifications:
 # Web Analytics Settings
 analytics:
   google:
-    id: # fill in your Google Analytics ID
+    id:
   goatcounter:
-    id: # fill in your GoatCounter ID
+    id:
   umami:
-    id: # fill in your Umami ID
-    domain: # fill in your Umami domain
+    id:
+    domain:
   matomo:
-    id: # fill in your Matomo ID
-    domain: # fill in your Matomo domain
+    id:
+    domain:
   cloudflare:
-    id: # fill in your Cloudflare Web Analytics token
+    id:
   fathom:
-    id: # fill in your Fathom Site ID
+    id:
 
 # Page views settings
 pageviews:
-  provider: # now only supports 'goatcounter'
+  provider:
 
-# Prefer color scheme setting.
-#
-# Note: Keep empty will follow the system prefer color by default,
-# and there will be a toggle to switch the theme between dark and light
-# on the bottom left of the sidebar.
-#
-# Available options:
-#
-#     light — Use the light color scheme
-#     dark — Use the dark color scheme
-#
-theme_mode: # 비워두면 방문자의 시스템 설정(다크/라이트 모드)을 기본으로 따릅니다.
+theme_mode:
 
-# The CDN endpoint for media resources.
-# Notice that once it is assigned, the CDN url
-# will be added to all media resources (site avatar, posts' images, audio and video files) paths starting with '/'
-#
-# e.g. 'https://cdn.com'
 cdn:
 
-# the avatar on sidebar, support local or CORS resources
-avatar: "/assets/img/avatar.jpg" # 사용할 프로필 이미지 경로입니다. (추후 assets/img/ 폴더 안에 avatar.jpg 파일을 넣어주세요)
+# 에러 유발을 방지하기 위해 이미지를 넣기 전까지 일시적으로 비워둡니다.
+avatar:
 
-# The URL of the site-wide social preview image used in SEO `og:image` meta tag.
-# It can be overridden by a customized `page.image` in front matter.
-social_preview_image: # string, local or CORS resources
+social_preview_image:
 
-# boolean type, the global switch for TOC in posts.
 toc: true
 
 actions:
-  # Display "Edit this post" action on each post page to encourage contributions.
   edit_post:
-    enabled: false # set to true to display the "Edit this post" action.
-    url: "" # repository base URL, e.g. https://github.com/cotes2020/jekyll-theme-chirpy/edit/master
-    # Use dynamic or static URL for the edit link.
-    # If `static_url` is false, the post's path will be appended to the `url` above as the final edit link.
-    # Set to true if the URL should remain unchanged, which means each post will share the same edit link.
-    static_url: false # [ true | false ]
+    enabled: false
+    url: ""
+    static_url: false
 
 comments:
-  # Global switch for the post-comment system. Keeping it empty means disabled.
-  provider: # [disqus | utterances | giscus] (나중에 댓글 창 붙이고 싶을 때 사용합니다)
-  # The provider options are as follows:
+  provider:
   disqus:
-    shortname: 
-  # utterances settings › https://utteranc.es/
+    shortname:
   utterances:
-    repo: 
-    issue_term: 
-  # Giscus options › https://giscus.app
+    repo:
+    issue_term:
   giscus:
-    repo: 
+    repo:
     repo_id:
     category:
     category_id:
-    mapping: 
-    strict: 
-    input_position: 
-    lang: 
-    reactions_enabled: 
+    mapping:
+    strict:
+    input_position:
+    lang:
+    reactions_enabled:
 
-# Self-hosted static assets, optional › https://github.com/cotes2020/chirpy-static-assets
 assets:
   self_host:
-    enabled: # boolean, keep empty means false
-    # specify the Jekyll environment, empty means both
-    # only works if `assets.self_host.enabled` is 'true'
-    env: # [development | production]
+    enabled:
+    env:
 
 pwa:
-  enabled: true # The option for PWA feature (installable)
+  enabled: true
   cache:
-    enabled: true # The option for PWA offline cache
-    # Paths defined here will be excluded from the PWA cache.
-    # Usually its value is the `baseurl` of another website that
-    # shares the same domain name as the current website.
+    enabled: true
     deny_paths:
-      # - "/example"  # URLs match `<SITE_URL>/example/*` will not be cached by the PWA
 
 paginate: 10
 
-# The base URL of your site
 baseurl: ""
 
 # ------------ The following options are not recommended to be modified ------------------
@@ -167,9 +123,8 @@ baseurl: ""
 kramdown:
   footnote_backlink: "&#8617;&#xfe0e;"
   syntax_highlighter: rouge
-  syntax_highlighter_opts: # Rouge Options › https://github.com/jneen/rouge#full-options
+  syntax_highlighter_opts:
     css_class: highlight
-    # default_lang: console
     span:
       line_numbers: false
     block:
@@ -183,14 +138,12 @@ collections:
 
 defaults:
   - scope:
-      path: "" # An empty string here means all files in the project
+      path: ""
       type: posts
     values:
       layout: post
-      comments: true # Enable comments in posts.
-      toc: true # Display TOC column in posts.
-      # DO NOT modify the following parameter unless you are confident enough
-      # to update the code of all other post links in this project.
+      comments: true
+      toc: true
       permalink: /posts/:title/
   - scope:
       path: _drafts
@@ -198,7 +151,7 @@ defaults:
       comments: false
   - scope:
       path: ""
-      type: tabs # see `site.collections`
+      type: tabs
     values:
       layout: page
       permalink: /:title/
