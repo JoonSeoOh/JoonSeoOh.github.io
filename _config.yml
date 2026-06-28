@@ -6,41 +6,40 @@ theme: jekyll-theme-chirpy
 # The language of the webpage › http://www.lingoes.net/en/translator/langcode.htm
 # If it has the same name as one of the files in folder `_data/locales`, the layout language will also be changed,
 # otherwise, the layout language will use the default value of 'en'.
-lang: en
+lang: ko # 한국어 서비스에 맞게 ko로 변경합니다.
 
 # Change to your timezone › https://zones.arilyn.cc
-timezone:
+timezone: Asia/Seoul # 대한민국 시간대로 설정합니다.
 
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: Chirpy # the main title
+title: JoonSeo's DevLog # 블로그 메인 타이틀
 
-tagline: A text-focused Jekyll theme # it will display as the subtitle
+tagline: AI & Software Engineering # 타이틀 밑에 들어갈 한 줄 소개 문구
 
-description: >- # used by seo meta and the atom feed
-  A minimal, responsive and feature-rich Jekyll theme for technical writing.
+description: >- # 검색 엔진 노출용 블로그 설명
+  인공지능 연구 및 소프트웨어 개발 기록을 담은 기술 블로그입니다.
 
 # Fill in the protocol & hostname for your site.
 # E.g. 'https://username.github.io', note that it does not end with a '/'.
-url: ""
+url: "https://JoonSeoOh.github.io" # 블로그 실제 주소로 연결합니다.
 
 github:
-  username: github_username # change to your GitHub username
+  username: JoonSeoOh # 깃허브 아이디로 연동합니다.
 
 twitter:
-  username: twitter_username # change to your Twitter username
+  username: # 트위터를 쓰지 않는다면 비워둡니다.
 
 social:
   # Change to your full name.
   # It will be displayed as the default author of the posts and the copyright owner in the Footer
-  name: your_full_name
-  email: example@domain.com # change to your email address
-  fediverse_handle: # fill in your fediverse handle. E.g. "@username@domain.com"
+  name: JoonSeoOh
+  email: joonseo@example.com # 본인의 실제 이메일 주소로 수정하셔도 됩니다.
+  fediverse_handle: # 비워둠
   links:
     # The first element serves as the copyright owner's link
-    - https://twitter.com/username # change to your Twitter homepage
-    - https://github.com/username # change to your GitHub homepage
+    - https://github.com/JoonSeoOh # 하단 첫 번째 링크 아이콘 (깃허브 프로필)
     # Uncomment below to add more social links
     # - https://www.facebook.com/username
     # - https://www.linkedin.com/in/username
@@ -89,7 +88,7 @@ pageviews:
 #     light — Use the light color scheme
 #     dark — Use the dark color scheme
 #
-theme_mode: # [light | dark]
+theme_mode: # 비워두면 방문자의 시스템 설정(다크/라이트 모드)을 기본으로 따릅니다.
 
 # The CDN endpoint for media resources.
 # Notice that once it is assigned, the CDN url
@@ -99,7 +98,7 @@ theme_mode: # [light | dark]
 cdn:
 
 # the avatar on sidebar, support local or CORS resources
-avatar:
+avatar: "/assets/img/avatar.jpg" # 사용할 프로필 이미지 경로입니다. (추후 assets/img/ 폴더 안에 avatar.jpg 파일을 넣어주세요)
 
 # The URL of the site-wide social preview image used in SEO `og:image` meta tag.
 # It can be overridden by a customized `page.image` in front matter.
@@ -120,25 +119,25 @@ actions:
 
 comments:
   # Global switch for the post-comment system. Keeping it empty means disabled.
-  provider: # [disqus | utterances | giscus]
+  provider: # [disqus | utterances | giscus] (나중에 댓글 창 붙이고 싶을 때 사용합니다)
   # The provider options are as follows:
   disqus:
-    shortname: # fill with the Disqus shortname. › https://help.disqus.com/en/articles/1717111-what-s-a-shortname
+    shortname: 
   # utterances settings › https://utteranc.es/
   utterances:
-    repo: # <gh-username>/<repo>
-    issue_term: # < url | pathname | title | ...>
+    repo: 
+    issue_term: 
   # Giscus options › https://giscus.app
   giscus:
-    repo: # <gh-username>/<repo>
+    repo: 
     repo_id:
     category:
     category_id:
-    mapping: # optional, default to 'pathname'
-    strict: # optional, default to '0'
-    input_position: # optional, default to 'bottom'
-    lang: # optional, default to the value of `site.lang`
-    reactions_enabled: # optional, default to the value of `1`
+    mapping: 
+    strict: 
+    input_position: 
+    lang: 
+    reactions_enabled: 
 
 # Self-hosted static assets, optional › https://github.com/cotes2020/chirpy-static-assets
 assets:
