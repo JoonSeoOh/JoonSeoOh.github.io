@@ -1,7 +1,7 @@
 ---
-title: "Attention Is All You Need 논문리뷰"
+title: "논문리뷰"
 date: 2026-07-13 18:00:00 +0900
-categories: [논문리뷰, Attention Is All You Need, 리뷰]
+categories: [논문리뷰, Attention Is All You Need]
 tags: [deep-learning, transformer, attention, nlp]
 math: true
 ---
