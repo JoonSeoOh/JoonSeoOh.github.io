@@ -95,7 +95,7 @@ Transformer 역시 이 거대한 인코더-디코더 구조를 그대로 따르�
 
 학습을 안정적으로 돕기 위해, 두 서브 레이어 주변에는 **잔차 연결(Residual Connection)**을 도입했고, 그 후 **레이어 정규화(Layer Normalization)**를 적용했습니다. 즉, 각 서브 레이어의 최종 출력 형식은 다음과 같습니다.
 
-$$\text{LayerNorm}(x + \text{Sublayer}(x))$$
+$$\mathrm{LayerNorm}(x + \mathrm{Sublayer}(x))$$
 
 이 잔차 연결을 매끄럽게 더해주려면 차원이 동일해야 하므로, 모델 내부의 모든 Embedding 차원과 서브 레이어의 출력 차원은 $d_{\mathrm{model}} = 512$로 통일되어 있습니다.
 
@@ -134,7 +134,7 @@ Query, Keys, Values, 그리고 최종 출력(Output)은 모두 **벡터 형태**
 #### 4.2.1. Scaled Dot-Product Attention
 저자들이 제안하는 가장 기본적이면서도 빠른 Attention 연산 방식입니다. 입력은 $d_k$ 차원의 Query들과 Key들, 그리고 $d_v$ 차원의 Value들로 이루어집니다. Query와 모든 Key의 내적(Dot product)을 계산하고 각각을 $\sqrt{d_k}$로 나눈 뒤, Softmax 함수를 적용하여 Value들에 대한 가중치를 얻습니다.
 
-$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
+$$\mathrm{Attention}(Q, K, V) = \mathrm{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
 
 * **왜 하필 Scaled Dot-Product인가?**
   Attention 점수를 계산하는 방법은 크게 1) Additive Attention과 2) Dot-product Attention 두 가지가 존재합니다. Dot-product 방식이 훨씬 빠르고 공간 효율적이지만, 차원 수($d_k$)가 커지면 **내적값 자체가 너무 커지는 문제**가 발생합니다. 값이 지나치게 커지면 Softmax 함수를 통과할 때 **기울기가 극도로 작아지는 Gradient Vanishing 구간**에 빠지게 되므로, 이를 방지하기 위해 차원의 제곱근인 $\sqrt{d_k}$로 나누어 스케일링을 해주는 것입니다.
