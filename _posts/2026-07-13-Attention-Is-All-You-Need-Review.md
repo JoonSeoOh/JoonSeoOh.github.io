@@ -73,6 +73,7 @@ Transformer는 이를 단 **상수 번(Constant, $O(1)$)의 연산**으로 줄�
 
 ## 4. Model Architecture
 
+![Transformer 아키텍처 구조도](/assets/img/posts/transformer-architecture.png)
 
 대부분의 경쟁력 있는 Sequence Transduction 모델들은 대개 인코더-디코더(Encoder-Decoder) 구조를 가집니다.
 
@@ -89,6 +90,8 @@ Transformer 역시 이 거대한 인코더-디코더 구조를 그대로 따르�
 인코더는 총 $N = 6$개의 동일한 레이어를 세로로 쌓아 올린 구조입니다. 각 레이어는 내부에 2개의 서브 레이어를 가지고 있습니다.
 * **1st Sub-Layer:** Multi-Head Self-Attention
 * **2nd Sub-Layer:** Position-wise Feed-Forward Network
+
+![인코더 블록 상세 구조](/assets/img/posts/encoder-stack.png)
 
 학습을 안정적으로 돕기 위해, 두 서브 레이어 주변에는 **잔차 연결(Residual Connection)**을 도입했고, 그 후 **레이어 정규화(Layer Normalization)**를 적용했습니다. 즉, 각 서브 레이어의 최종 출력 형식은 다음과 같습니다.
 
@@ -126,6 +129,7 @@ Attention은 한마디로 정리하면, **"Query(질문)를 Key(식별자)-Value
 
 Query, Keys, Values, 그리고 최종 출력(Output)은 모두 **벡터 형태**입니다. 출력 벡터는 Value 벡터들의 가중합(Weighted sum)으로 계산되는데, 이때 각 Value에 곱해지는 가중치(Weight)는 Query와 해당 Key의 유사도(호환성 함수, Compatibility Function)에 의해 결정됩니다.
 
+![Scaled Dot-Product Attention과 Multi-Head Attention 연산 구조](/assets/img/posts/attention-mechanisms.png)
 
 #### 4.2.1. Scaled Dot-Product Attention
 저자들이 제안하는 가장 기본적이면서도 빠른 Attention 연산 방식입니다. 입력은 $d_k$ 차원의 Query들과 Key들, 그리고 $d_v$ 차원의 Value들로 이루어집니다. Query와 모든 Key의 내적(Dot product)을 계산하고 각각을 $\sqrt{d_k}$로 나눈 뒤, Softmax 함수를 적용하여 Value들에 대한 가중치를 얻습니다.
@@ -163,6 +167,8 @@ Transformer 내부에서는 이 Multi-Head Attention을 구체적으로 세 가�
 3. **Encoder-Decoder Attention (인코더-디코더 어텐션):**
    * **Query는 직전 디코더 레이어**에서 오고, **Key와 Value는 인코더의 최종 출력**에서 가져옵니다.
    * 이를 통해 디코더의 모든 위치가 입력 문장(인코더 내용) 전체의 어떤 단어에 집중해야 하는지(전형적인 번역기 구조)를 결정하게 됩니다.
+
+![디코더 내 어텐션의 마스킹 및 인코더-디코더 정보 흐름도](/assets/img/posts/decoder-attention-flow.png)
 
 > 👆 **Scaled Dot-Product와 Multi-Head Attention의 관계 정리**
 > 아키텍처 다이어그램에 보이는 'Attention' 레이어는 모두 Multi-Head Attention에 해당합니다. Scaled Dot-Product Attention은 Multi-Head Attention의 내부 연산을 담당하는 핵심 부품입니다. 즉, 모델의 어떤 위치에 있는 Attention이든 기본 연산은 **Scaled Dot-Product 방식**을 취하되, 이를 한 번만 계산하는 것이 아니라 Head를 8개로 쪼개어 병렬로 처리하는 **Multi-Head 방식**으로 작동하는 아키텍처 메커니즘입니다.
