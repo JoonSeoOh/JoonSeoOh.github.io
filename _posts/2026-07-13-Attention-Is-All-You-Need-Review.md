@@ -73,7 +73,7 @@ Transformer는 이를 단 **상수 번(Constant, $O(1)$)의 연산**으로 줄�
 
 ## 4. Model Architecture
 
-![Transformer 아키텍처 구조도](/assets/img/posts/transformer-architecture.png)
+![Transformer 아키텍처 구조도](/assets/img/posts/Attention/transformer-architecture.png)
 
 대부분의 경쟁력 있는 Sequence Transduction 모델들은 대개 인코더-디코더(Encoder-Decoder) 구조를 가집니다.
 
@@ -91,7 +91,7 @@ Transformer 역시 이 거대한 인코더-디코더 구조를 그대로 따르�
 * **1st Sub-Layer:** Multi-Head Self-Attention
 * **2nd Sub-Layer:** Position-wise Feed-Forward Network
 
-![인코더 블록 상세 구조](/assets/img/posts/encoder-stack.png)
+![인코더 블록 상세 구조](/assets/img/posts/Attention/encoder-stack.png)
 
 학습을 안정적으로 돕기 위해, 두 서브 레이어 주변에는 **잔차 연결(Residual Connection)**을 도입했고, 그 후 **레이어 정규화(Layer Normalization)**를 적용했습니다. 즉, 각 서브 레이어의 최종 출력 형식은 다음과 같습니다.
 
@@ -129,7 +129,7 @@ Attention은 한마디로 정리하면, **"Query(질문)를 Key(식별자)-Value
 
 Query, Keys, Values, 그리고 최종 출력(Output)은 모두 **벡터 형태**입니다. 출력 벡터는 Value 벡터들의 가중합(Weighted sum)으로 계산되는데, 이때 각 Value에 곱해지는 가중치(Weight)는 Query와 해당 Key의 유사도(호환성 함수, Compatibility Function)에 의해 결정됩니다.
 
-![Scaled Dot-Product Attention과 Multi-Head Attention 연산 구조](/assets/img/posts/attention-mechanisms.png)
+![Scaled Dot-Product Attention과 Multi-Head Attention 연산 구조](/assets/img/posts/Attention/attention-mechanisms.png)
 
 #### 4.2.1. Scaled Dot-Product Attention
 저자들이 제안하는 가장 기본적이면서도 빠른 Attention 연산 방식입니다. 입력은 $d_k$ 차원의 Query들과 Key들, 그리고 $d_v$ 차원의 Value들로 이루어집니다. Query와 모든 Key의 내적(Dot product)을 계산하고 각각을 $\sqrt{d_k}$로 나눈 뒤, Softmax 함수를 적용하여 Value들에 대한 가중치를 얻습니다.
@@ -168,7 +168,7 @@ Transformer 내부에서는 이 Multi-Head Attention을 구체적으로 세 가�
    * **Query는 직전 디코더 레이어**에서 오고, **Key와 Value는 인코더의 최종 출력**에서 가져옵니다.
    * 이를 통해 디코더의 모든 위치가 입력 문장(인코더 내용) 전체의 어떤 단어에 집중해야 하는지(전형적인 번역기 구조)를 결정하게 됩니다.
 
-![디코더 내 어텐션의 마스킹 및 인코더-디코더 정보 흐름도](/assets/img/posts/decoder-attention-flow.png)
+![디코더 내 어텐션의 마스킹 및 인코더-디코더 정보 흐름도](/assets/img/posts/Attention/decoder-attention-flow.png)
 
 > 👆 **Scaled Dot-Product와 Multi-Head Attention의 관계 정리**
 > 아키텍처 다이어그램에 보이는 'Attention' 레이어는 모두 Multi-Head Attention에 해당합니다. Scaled Dot-Product Attention은 Multi-Head Attention의 내부 연산을 담당하는 핵심 부품입니다. 즉, 모델의 어떤 위치에 있는 Attention이든 기본 연산은 **Scaled Dot-Product 방식**을 취하되, 이를 한 번만 계산하는 것이 아니라 Head를 8개로 쪼개어 병렬로 처리하는 **Multi-Head 방식**으로 작동하는 아키텍처 메커니즘입니다.
@@ -220,3 +220,44 @@ $$\begin{aligned} PE_{(\mathrm{pos}, 2i)} &= \sin\left(\mathrm{pos} / 10000^{2i 
 > 즉, $PE_{(\mathrm{pos} + k)} = PE_{(\mathrm{pos})} \times M$ 구조로 표현이 가능하며, 여기서 행렬 $M$은 오직 떨어진 거리 $k$에 의해서만 결정되는 **고정된 행렬**이 됩니다. 덕분에 모델은 절대적 위치뿐만 아니라 단어 사이의 상대적 거리 차이까지 선형적으로 쉽게 인지할 수 있게 됩니다.
 
 ---
+
+### 5. Why Self-Attention?
+
+RNN 및 CNN과 비교하여 Self-Attention의 당위성을 세 가지 측면에서 비교하여 입증한다. 다음 table을 확인하면 명확하게 알 수 있다.
+
+![table 1: 레이어당 총 계산 복잡도, 최소한의 순차 연산, 최대 경로 길이](/assets/img/posts/Attention/attention-table1.png)
+*Table 1: 레이어당 총 계산 복잡도, 최소한의 순차 연산, 최대 경로 길이. $n$은 시퀀스 길이(sequence length), $d$는 표현 차원(representation dimension), $k$는 합성곱의 커널 크기(kernel size of convolution), $r$은 제한된 self-attention에서의 이웃 크기(size of neighborhood in restricted self-attention)이다.*
+
+* **비교를 위한 세 가지 핵심 기준**
+    1. **레이어당 총 계산 복잡도**: 연산량이 얼마나 적고 효율적인가?
+    2. **병렬화 가능한 연산량**: 최소한으로 필요한 순차 연산의 수가 적어 병렬 처리가 잘 되는가?
+    3. **장거리 의존성 간의 경로 길이**: 네트워크 안에서 멀리 떨어진 단어 조합끼리 신호가 오고 가는 경로가 얼마나 짧은가. (이유: 신호가 거쳐야 하는 경로가 짧을수록 장거리 의존성을 학습하기가 훨씬 쉽기 때문)
+
+* **레이어 타입별 세부 비교 (Table 1 분석)**
+    1. **Self-Attention**: 문장의 모든 단어 쌍을 한 번에 연결하므로 최대 경로 길이가 단 $O(1)$(상수 시간)이다. 일반적으로 번역 문장에서의 문장 길이($n$)가 차원 수($d$)보다 작은 경우가 대부분이므로, RNN보다 계산 속도도 빠르다. 만약 문장이 너무 길어지면 연산량을 줄이기 위해 자기 주변 $r$ 크기의 이웃만 보는 '제한된 self-attention(Restricted Self-Attention)'을 쓸 수도 있으며, 이 경우 복잡도는 $O(r \cdot n \cdot d)$, 경로는 $O(n / r)$이 된다.
+    2. **RNN/LSTM**: 단어를 무조건 순서대로 처리해야 하므로 $O(n)$만큼의 순차 연산이 강제되어 병렬 처리가 불가능하다. 문장 맨 앞 단어와 맨 뒤 단어가 신호를 주고받으려면 문장 길이 $n$만큼의 단계를 거쳐야 하므로 장거리 의존성 학습이 어렵다.
+    3. **CNN**: 모든 위치를 동시에 계산할 수 있어 병렬화는 좋지만, 커널 크기의 제한 때문에 멀리 떨어진 두 단어를 연결하려면 레이어를 높게 쌓아야 해서 경로가 길어진다. 대안으로 분리형 합성곱(Separable Convolution)을 쓰면 복잡도를 낮출 수 있지만, $k = n$이 되면 이는 결국 Transformer가 채택한 self-attention + feed-forward 구조의 복잡도와 같아진다.
+
+* **부가적 이점: 모델의 해석 가능성**
+    
+    → Self-attention을 사용하면, 모델이 문장을 어떻게 이해하는지 시각적으로 직접 확인할 수 있다. 아래 사진을 보면, 개별 어텐션 헤드들이 인간이 학습하는 문법적, 의미적 구조를 스스로 학습하여 강하게 연결하고 있음을 직관적으로 보여준다.
+    
+    ![attention_visualization](/assets/img/posts/Attention/attention-ex.png)
+
+---
+
+### 6. Conclusion
+
+1. **연구의 요약**
+    * Transformer는 **오직 Attention에만 기반한 최초의 시퀀스 변환 모델**이다.
+    * 기존 인코더-디코더 아키텍처에서 가장 흔하게 쓰이던 Recurrent Layer(RNN)를 Multi-Head Self-Attention으로 완벽하게 대체하였다.
+
+2. **Transformer의 의의**
+    * 번역 Task에서 Recurrent나 Convolutional 레이어 기반의 모델들보다 **획기적으로 빠르게 학습**할 수 있다.
+    * WMT 2014 영어-독일어 및 영어-프랑스어 태스크 모두에서 기존의 앙상블 모델까지 제치고 새로운 최고성능(SOTA)을 달성했다.
+
+3. **향후 연구 방향**
+    * 저자들은 어텐션 기반 모델의 잠재력에 크게 고무되었으며, 향후 이 아키텍처를 텍스트뿐만 아니라 이미지, 오디오, 비디오 등 다른 모달리티(Modality)를 포함하는 문제로 확장할 계획을 밝혔다.
+    * 매우 긴 입력과 출력을 효율적으로 처리하기 위해, 본문에서 언급한 '지역적으로 제한된 어텐션 메커니즘(Local, restricted attention mechanism)'을 더 깊게 연구할 예정이다.
+    * 디코더가 단어를 하나씩 순차적으로 생성하는 순방향 연산 과정을 한층 더 효율화할 것이다.
+
