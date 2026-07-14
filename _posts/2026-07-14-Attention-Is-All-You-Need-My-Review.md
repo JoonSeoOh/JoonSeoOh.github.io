@@ -6,96 +6,104 @@ tags: [deep-learning, transformer, attention, nlp]
 math: true
 ---
 
----
-title: "[Paper Review] Attention Is All You Need: Transformer 완벽 해부 및 심화 분석"
-date: 2026-07-14 18:20:00 +0900
-categories: [AI Study, Paper Review]
-tags: [deep learning, nlp, transformer, attention, paper review, machine learning]
----
-
-안녕하세요. 오늘은 자연어 처리(NLP)를 넘어 최신 인공지능 트렌드의 근간이 된 기념비적인 논문, **"Attention Is All You Need"**를 심층 리뷰해 보겠습니다. 
-
-머신러닝과 딥러닝 모델링을 공부하다 보면 반드시 마주치게 되는 이 논문은, 기존의 순환(Recurrence) 구조를 완전히 배제하고 오직 Attention 메커니즘만으로 최고 수준의 성능을 이끌어낸 아키텍처, **Transformer**를 제안합니다.
+앞서 **'Attention Is All You Need'** 논문 리뷰를 진행했는데, 해당 글만보고 이해하기 쉽지 않을 수 있습니다.
+따라서, 해당 논문 내용을 이해하기 쉽게 총정리하고, 제가 읽으며 어려웠던 부분도 따로 정리해볼까 합니다.
 
 ---
 
-## 1. Introduction: 기존 모델의 근본적 한계와 Global Dependency
+## 1. 기존 모델의 한계와 Transformer의 등장 배경
 
-기존 Sequence Transduction 모델들의 주류는 인코더와 디코더를 결합한 복잡한 RNN(LSTM, GRU 등)이나 CNN이었습니다. 
+기존 Sequence Transduction 모델들의 주류는 인코더와 디코더를 포함한 복잡한 RNN이나 CNN 기반이었습니다. 최고 성능을 내는 모델 역시 RNN/CNN에 Attention 메커니즘을 결합한 형태였습니다.
 
-* **RNN 계열의 순차적 계산(Sequential Nature) 문제:** 현재 상태의 은닉 벡터 h_t를 계산하려면 반드시 이전 상태의 은닉 벡터 h_t-1이 필요합니다. 이는 메모리 제약을 발생시키고, 무엇보다 **연산의 병렬화(Parallelization)**를 근본적으로 불가능하게 만듭니다. 문장이 길어질수록 병목 현상은 심해집니다.
-* **CNN 계열(ConvS2S, ByteNet)의 한계:** 병렬 처리를 위해 CNN을 도입한 시도도 있었지만, 이 모델들은 멀리 떨어진 두 단어의 신호를 연결하기 위해 수많은 레이어를 거쳐야 했습니다(선형 또는 로그 스케일로 연산량 증가). 
+특히 LSTM이나 GRU 같은 순환 모델들은 입력 및 출력 시퀀스의 기호 위치를 따라 순서대로만 계산을 진행해야 하는 '순차적 계산(Sequential Nature)'의 한계가 있었습니다. 현재 상태의 벡터를 계산하려면 반드시 그 이전 상태의 벡터가 필요하기 때문입니다. 이러한 구조는 학습 시 연산의 병렬화를 방해하며, 문장의 길이가 길어질수록 메모리 제약이 커지고 연산 효율이 떨어집니다.
 
-**Transformer의 핵심 아이디어**는 순차 연산을 과감히 버리고, **Global Dependency(전역적 의존성)**를 오로지 Attention만으로 잡아내자는 것입니다. 
-예를 들어, *"과거에 수많은 실패를 겪었던 그 청년은, 마침내 거대한 글로벌 기업의 CEO가 되었다."* 라는 문장에서 '청년'과 'CEO'는 물리적 거리가 멀지만 강하게 연결되어야 합니다. Transformer는 문장 전체를 한 번에 조망하여 이러한 장거리 의존성을 효과적으로 포착합니다.
+이 논문은 순환 구조를 과감히 버리고, 입출력 사이의 전역적 의존성(Global Dependencies)을 오직 **Attention**에만 의존하여 뽑아내는 **Transformer** 구조를 최초로 제안했습니다. 이를 통해 병렬화가 가능해졌고 학습 시간을 획기적으로 단축할 수 있었습니다.
 
----
+## 2. 모델 아키텍처 (Model Architecture)
 
-## 2. Model Architecture: 거대한 인코더-디코더의 재구성
+Transformer 역시 거대한 인코더-디코더 구조를 따르되, 내부를 RNN 대신 Self-Attention과 피드포워드 네트워크(Point-wise Feed-Forward Networks)로 채웠습니다.
 
-Transformer는 큰 틀에서 인코더-디코더 구조를 유지하지만, 내부의 RNN 셀들을 들어내고 그 자리를 **Self-Attention**과 **Point-wise Feed-Forward Network**로 채웠습니다.
+![Transformer 전체 아키텍처](/assets/img/posts/AttentionExtra/transformer_architecture.png)
 
-### 2.1. Encoder Stack
-총 6개(N=6)의 레이어를 층층이 쌓아 올립니다. 각 레이어는 다음 2개의 Sub-Layer로 구성됩니다.
-1.  **Multi-Head Self-Attention**
-2.  **Position-wise Feed-Forward Network (FFN)**
+### 2.1. 인코더와 디코더 적층 구조
+* **Encoder:** 총 6개의 동일한 레이어를 쌓아 올립니다. 각 레이어는 `Multi-Head Self-Attention`과 `Position-wise Feed-Forward Network`라는 2개의 서브 레이어를 가집니다.
+* **Decoder:** 역시 6개의 레이어를 쌓지만, 인코더의 정보를 받아와야 하므로 `디코더-인코더 어텐션`이 추가되어 총 3개의 서브 레이어를 가집니다. 또한, 단어를 순서대로 예측할 때 미래의 단어를 미리 커닝하는 것을 막기 위해 '마스킹(Masking)' 기법을 추가했습니다.
 
-**💡 아키텍처 디테일: 잔차 연결과 레이어 정규화**
-각 서브 레이어를 통과할 때마다 모델은 다음과 같은 연산을 수행합니다.
-* **LayerNorm(x + Sublayer(x))**
+**⚠️ 아키텍처 디테일:**
+학습을 안정적으로 돕기 위해 각 서브 레이어 주변에 잔차 연결(Residual Connection)을 도입하고, 레이어 정규화(Layer Normalization)를 거칩니다.
+* 출력 형식: $\text{LayerNorm}(x + \text{Sublayer}(x))$
+* 잔차 연결을 매끄럽게 더하기 위해 모델 내부의 모든 임베딩 차원과 서브 레이어의 출력 차원은 $d_{model}=512$로 통일했습니다.
 
-여기서 `x + Sublayer(x)`는 **잔차 연결(Residual Connection)**을 의미합니다. 6층이나 되는 깊은 신경망에서 앞쪽의 중요한 정보가 흐려지거나 미분값이 0으로 수렴하는 **경사 소실(Gradient Vanishing)**을 막기 위해 원래의 입력값 x를 그대로 더해줍니다. 이후 **레이어 정규화(Layer Normalization)**를 통해 입력 분포를 일정하게 유지시켜 학습 속도와 안정성을 극대화합니다. (모든 출력 차원은 d_model = 512로 통일됩니다.)
+## 3. 핵심 메커니즘: Attention
 
-### 2.2. Decoder Stack
-디코더 역시 6개의 레이어를 쌓지만, 인코더의 결과를 받아오기 위해 총 3개의 Sub-Layer를 가집니다.
-1.  **Masked Multi-Head Self-Attention:** 디코더는 단어를 자기회귀적(Auto-regressive)으로 순차 생성해야 합니다. 뒤에 나올 미래의 단어를 미리 '커닝'하는 것을 막기 위해 마스킹(Masking)을 적용합니다.
-2.  **Encoder-Decoder Attention:** 디코더의 위치가 입력 문장(인코더 내용) 중 어디에 집중해야 할지 결정합니다.
-3.  **Position-wise Feed-Forward Network**
+Attention은 한마디로 **"질문(Query)을 식별자(Key)-값(Value) 쌍의 세트와 연관 지어 최적의 정보를 뽑아내는 함수"**입니다. 
 
----
-
-## 3. Attention: 모델의 심장
-
-이 논문에서 Attention은 **"Query(질문)를 Key(식별자)-Value(값) 쌍과 연관 지어 가중합(Weighted sum)을 구하는 과정"**으로 정의됩니다.
+![Multi-Head Attention 및 Scaled Dot-Product 구조](/assets/img/posts/AttentionExtra/multi_head_attention.png)
 
 ### 3.1. Scaled Dot-Product Attention
-Transformer는 가장 연산이 빠르고 공간 효율적인 Dot-Product(내적) 방식을 사용합니다.
+Transformer는 가장 빠르고 공간 효율적인 Dot-Product(내적) 어텐션 방식을 기본으로 사용합니다. 
 
-* **Attention(Q, K, V) = softmax(QK^T / √d_k) * V**
+$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
 
-**❓ 왜 √d_k로 스케일링을 할까요?**
-Key 벡터의 차원 수(d_k)가 커지면 내적(QK^T)의 결괏값 자체가 지나치게 커집니다. 이 큰 값이 softmax 함수를 그대로 통과하면, 함수의 양극단으로 값이 쏠리며 기울기가 거의 0에 가까워지는 **경사 소실 구간**에 빠지게 됩니다. 이를 방지하기 위해 차원의 제곱근(√d_k)으로 값을 나누어 안정적인 기울기를 확보하는 수학적 테크닉입니다.
+차원 수($d_k$)가 커지면 내적 값 자체가 너무 커져서, softmax 함수를 통과할 때 기울기가 극도로 작아지는 경사 소실(Gradient Vanishing) 구간에 빠지게 됩니다. 이를 방지하기 위해 차원의 제곱근($\sqrt{d_k}$)으로 값을 나누어 스케일링을 해주는 것이 핵심입니다.
 
 ### 3.2. Multi-Head Attention
-512차원의 큰 벡터를 한 번에 연산하는 대신, 선형 사영(Linear Projection)을 통해 작은 차원으로 8번(h=8) 쪼개어 병렬로 어텐션을 수행합니다. (d_k = d_v = 512 / 8 = 64차원)
+512차원의 벡터를 한 번에 연산하는 대신, 서로 다르게 학습된 선형 사영을 통해 작은 차원으로 8번 쪼개서 병렬로 어텐션을 수행합니다. 
 
-* **MultiHead(Q, K, V) = Concat(head_1, ..., head_h) * W^O**
+$$\mathrm{MultiHead}(Q, K, V) = \mathrm{Concat}(\mathrm{head}_1, \dots, \mathrm{head}_h)W^O$$
 
-이 방식의 강력함은 모델이 **"다양한 표현 부분 공간(Representation Subspaces)"**에 동시에 집중할 수 있다는 점입니다. 하나의 헤드는 주어-동사의 문법적 관계를 추적하고, 다른 헤드는 지시대명사가 가리키는 대상을 추적하는 식으로 훨씬 입체적인 문맥 파악이 가능해집니다.
+단일 어텐션을 사용하면 문장 전체의 평균적인 정보만 보게 되지만, 헤드(Head)를 여러 개로 쪼개면 다양한 위치에서 서로 다른 서브 스페이스의 정보(예: 주어와 동사 관계, 형용사와 명사 관계 등)에 동시에 집중할 수 있는 장점이 있습니다.
 
----
+## 4. Positional Encoding (위치 인코딩)
 
-## 4. 모델의 약점 극복: Positional Encoding
+Transformer는 순환 모델이 아니므로 단어의 '순서나 위치 정보'가 입력되지 않습니다. 이 문제를 해결하기 위해 시퀀스 내 토큰의 위치 정보를 주입하는 Positional Encoding을 추가합니다.
 
-Transformer에는 RNN이나 CNN이 없으므로 단어의 '위치나 순서'를 알 수 없습니다. 컴퓨터 입장에서는 문장이 그저 단어들이 마구잡이로 섞인 주머니(Bag of Words)처럼 보일 수 있습니다. 이를 해결하기 위해 입력 임베딩에 위치 정보를 더해주는 **Positional Encoding**을 사용합니다.
+저자들은 다양한 주기를 가진 $\sin$ 함수와 $\cos$ 함수를 사용했습니다.
 
-저자들은 주기가 다른 사인(sin), 코사인(cos) 함수를 사용했습니다.
-* **PE(pos, 2i) = sin(pos / 10000^(2i / d_model))**
-* **PE(pos, 2i+1) = cos(pos / 10000^(2i / d_model))**
+$$PE_{(\mathrm{pos}, 2i)} = \sin\left(\frac{\mathrm{pos}}{10000^{2i / d_{\mathrm{model}}}}\right)$$
+$$PE_{(\mathrm{pos}, 2i+1)} = \cos\left(\frac{\mathrm{pos}}{10000^{2i / d_{\mathrm{model}}}}\right)$$
 
-*(pos는 단어의 절대적 위치, i는 차원의 인덱스)*
+삼각함수를 활용하면 특정 오프셋($k$)만큼 떨어진 위치의 값을 선형 결합으로 쪼개어 표현할 수 있기 때문에, 모델이 단어들 간의 상대적인 위치 관계를 매우 쉽게 학습할 수 있습니다.
 
-**❓ 왜 하필 삼각함수인가요?**
-고정된 오프셋 k에 대해, PE(pos+k)를 PE(pos)의 선형 결합으로 표현할 수 있기 때문입니다. 즉, 모델이 단어들 사이의 '상대적인 거리'를 규칙적으로 아주 쉽게 학습할 수 있는 환경을 제공합니다.
+![Positional Encoding의 시각화](/assets/img/posts/AttentionExtra/positional_encoding.png)
 
 ---
 
-## 5. Conclusion: 왜 Self-Attention이어야 하는가?
+## 5. Q&A: 논문을 읽으며 어려웠던 개념 정리 👆
 
-논문은 RNN, CNN 대비 Self-Attention의 당위성을 세 가지로 증명합니다.
+개인적으로 논문을 읽으면서 이해하기 까다로웠던 6가지 디테일을 따로 정리해 보았습니다.
 
-1.  **계산 복잡도 (Computational Complexity):** 문장 길이(n)가 차원 수(d)보다 짧은 대부분의 기계 번역 환경에서, Self-Attention (O(n^2 * d))은 RNN (O(n * d^2))보다 레이어당 총 연산량이 적습니다.
-2.  **병렬화 (Parallelization):** 순차적인 연산이 필요 없어 O(1)의 횟수로 병렬 처리가 가능합니다. (RNN은 O(n) 강제)
-3.  **장거리 의존성 (Long-Range Dependencies):** 네트워크 내에서 어떤 두 단어가 신호를 주고받는 최대 경로 길이가 O(1)로 짧아져, 정보의 손실 없이 문맥을 완벽히 파악합니다.
+**1. Positional Encoding과 삼각함수**
+왜 수많은 함수 중 $\sin$과 $\cos$일까요? 특정 오프셋 $k$에 대해 $PE(pos+k)$가 $PE(pos)$의 선형 결합으로 표현될 수 있기 때문입니다. 즉, $pos+k$ 위치의 값을 $PE(pos) \times M$(고정된 행렬) 구조로 바꿀 수 있어 모델이 상대적인 거리 관계를 쉽게 학습할 수 있습니다.
 
-Transformer는 딥러닝 아키텍처의 패러다임을 순환 연산에서 **병렬 어텐션**으로 완벽히 전환시킨 기념비적인 연구이며, 오늘날 BERT, GPT 등 대규모 언어 모델(LLM)의 튼튼한 뼈대가 되었습니다.
+**2. Scaled Dot-Product Attention과 Multi-Head Attention?**
+어텐션 점수를 낼 때 빠르지만 값이 비대해지는 내적(Dot-Product)의 단점을 $\sqrt{d_k}$로 나누어(Scaling) 해결한 것이 `Scaled Dot-Product Attention`입니다. 그리고 이 과정을 거대한 단일 연산으로 처리하지 않고, 8개($h=8$)로 쪼개어 병렬 연산함으로써 다양한 문맥적 관점을 동시에 확보하는 것이 `Multi-Head Attention`입니다.
+
+**3. Residual Connection & Layer Normalization?**
+`Residual Connection(잔차 연결)`은 레이어를 거친 결과물에 거치기 전의 원래 입력값 $x$를 더해주는 장치로, 깊은 층에서도 정보 손실과 경사 소실(Gradient Vanishing)을 막습니다. `Layer Normalization`은 하나의 문장 샘플 안에서 단어 벡터들의 특징 차원을 기준으로 평균과 분산을 정규화하여 학습을 안정화시킵니다.
+
+**4. 왜 인코더, 디코더 레이어수가 N=6? 서브레이어의 구조는 왜 저런지?**
+$N=6$은 실험적으로 연산 속도와 모델 성능(BLEU 점수) 사이에서 찾은 최적의 실용적 타협점입니다. 서브 레이어가 어텐션과 FFN으로 구성된 이유는, 어텐션이 '문맥과 의미적 관계를 파악'하면 FFN이 '파악된 특징들을 비선형적으로 융합하고 가공'하는 상호보완적 역할을 하기 때문입니다.
+
+**5. $d_v$, $d_k$, $d_{model}$ 등의 차원이 어떻게 결정?**
+잔차 연결을 위해 모델 전체의 기본 차원은 $d_{model}=512$로 고정됩니다. Multi-Head Attention에서 헤드 개수를 $h=8$로 정했으므로, $d_k$와 $d_v$는 $d_{model} / h = 512 / 8 = 64$차원으로 자연스럽게 결정됩니다.
+
+**6. 학습 가능한 Embedding을 사용한다는 말이 무슨 말인가?**
+초기 모델은 '사과'라는 단어의 의미를 모르기 때문에 512차원 공간에 무작위로 벡터를 흩뿌립니다. 하지만 수많은 문장을 학습하며 역전파를 거치면, 비슷한 의미를 가진 단어끼리 벡터 공간상에 물리적으로 가깝게 모이도록 벡터 안의 숫자(가중치)들이 점진적으로 업데이트(학습)된다는 뜻입니다.
+
+---
+
+## 6. 처음 읽는 독자를 위한 추가 가이드 ✔️
+
+이 논문을 처음 접할 때 많은 분들이 헷갈려하는 두 가지 핵심 개념을 덧붙입니다.
+
+**Q, K, V (Query, Key, Value)가 정확히 무엇인가요?**
+데이터베이스 검색에 비유하면 이해가 쉽습니다. 유튜브에서 영상을 찾는다고 가정해 봅시다.
+* **Query (질문):** 검색창에 내가 입력한 검색어 (예: "머신러닝 기초")
+* **Key (식별자):** 각 영상들이 가지고 있는 제목이나 태그 (예: "딥러닝 입문", "AI 수학")
+* **Value (값):** 그 제목(Key)을 클릭했을 때 나오는 실제 영상 내용
+
+모델은 문장 속 한 단어(Query)가 다른 단어들(Keys)과 얼마나 연관되어 있는지 유사도를 구하고, 그 유사도를 바탕으로 실제 의미(Values)들을 혼합해 문맥을 파악합니다.
+
+**디코더의 마스킹(Masking)은 왜 필요한가요?**
+인코더는 입력된 문장 전체를 한 번에 봅니다. 반면, 디코더는 단어를 하나씩 순서대로 만들어내는 **자기회귀적(Auto-regressive)** 특성이 있습니다. 우리가 글을 쓸 때 아직 쓰지 않은 미래의 글을 참조할 수 없는 것과 같습니다. 하지만 딥러닝 학습 시에는 정답 문장 전체를 한 번에 연산하므로, 디코더가 미래에 예측해야 할 단어를 미리 보고 학습하는(커닝) 것을 물리적으로 차단하기 위해 마이너스 무한대($-\infty$) 값으로 가려버리는 것이 마스킹입니다.
