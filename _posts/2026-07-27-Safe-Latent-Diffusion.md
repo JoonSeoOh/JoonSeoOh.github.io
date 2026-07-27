@@ -1,7 +1,7 @@
 ---
-title: "[논문 리뷰] Safe Latent Diffusion: Mitigating Inappropriate Degeneration in Diffusion Models"
+title: "논문 리뷰"
 date: 2026-07-27 20:17:00 +0900
-categories: [논문리뷰, Safe Latent Diffusion]
+categories: [논문리뷰, Safe Latent Diffusion: Mitigating Inappropriate Degeneration in Diffusion Models]
 tags: [diffusion, generative-ai, ai-safety, paper-review]
 math: true
 mermaid: true
@@ -12,7 +12,7 @@ mermaid: true
 ### 1. 문제 제기 및 연구 배경
 Stable Diffusion과 같은 텍스트-이미지 생성 모델(Text-to-Image Generation Model)은 이미지 품질과 텍스트 반영 능력에서 놀라운 발전을 이루며 수많은 산업과 서비스에 빠르게 적용되고 있습니다. 
 
-하지만 이 모델들은 인터넷의 **정제되지 않은 수십억 개의 대규모 데이터셋**을 스크랩하여 학습합니다. 그 결과, **인간 사회의 편향(Bias)이나 부적절하고 유해한 행동**까지 그대로 학습하게 된다는 치명적인 문제가 발생합니다. AI가 이를 단순히 출력하는 것을 넘어, 사회적 편향(Societal Bias)을 더욱 강화할 위험 ⚠️ 이 있습니다.
+하지만 이 모델들은 인터넷의 **정제되지 않은 수십억 개의 대규모 데이터셋**을 스크랩하여 학습합니다. 그 결과, **인간 사회의 편향(Bias)이나 부적절하고 유해한 행동**까지 그대로 학습하게 된다는 치명적인 문제가 발생합니다. AI가 이를 단순히 출력하는 것을 넘어, 사회적 편향(Societal Bias)을 더욱 강화할 위험이 있습니다.
 
 → 기존의 안전 대책은 주로 이미지가 다 만들어진 뒤에 이를 검사해서 가려버리는 **'사후 필터링(Post-hoc filtering)'** 방식이었습니다. 하지만 이는 이미지를 생성하는 데 GPU 자원을 모두 낭비하므로 비효율적이며, 사용자가 단어를 교묘하게 꼬아서 입력하는 **'프롬프트 엔지니어링(우회 공격)'에 너무 쉽게 뚫린다**는 한계가 있었습니다.
 
