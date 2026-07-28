@@ -80,6 +80,7 @@ CFG 노이즈 예측 수식: 𝜀(z_t, c) = 𝜀_𝜃(z_t, ∅) + s · (𝜀_�
 ## 1. Introduction
 
 ![Figure 1: 본 논문 핵심 아이디어의 시각화](/assets/img/posts/SLD/figure1.png)
+
 *Figure 1: <입력 프롬프트> → <표준 Stable Diffusion> → 부적절한 이미지 생성 (Nudity/Violence) → SLD 적용 → 안전하게 수정된 고품질 이미지 생성*
 
 1. **부적절한 이미지 생성 현상**: Nudity, Violence 요소가 포함될 수 있는 프롬프트를 입력했을 때, 기존 Stable Diffusion은 노출이나 유혈 표현이 여과 없이 담긴 이미지를 그대로 생성합니다.
