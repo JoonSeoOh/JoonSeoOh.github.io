@@ -3,6 +3,10 @@ title: "논문 리뷰"
 date: 2026-07-27 20:17:00 +0900
 categories: [논문리뷰, Safe Latent Diffusion]
 tags: [diffusion, generative-ai, ai-safety, paper-review]
+description: "모델 재학습 없이 추론 단계에서 유해 이미지를 안전하게 차단하는 Safe Latent Diffusion 논문 핵심 리뷰"
+image:
+  path: /assets/img/posts/SLD/figure1.png
+  alt: Safe Latent Diffusion 작동 원리 요약 이미지
 math: true
 mermaid: true
 ---

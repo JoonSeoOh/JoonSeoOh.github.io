@@ -3,7 +3,12 @@ title: "논문리뷰"
 date: 2026-07-13 18:00:00 +0900
 categories: [논문리뷰, Attention Is All You Need]
 tags: [deep-learning, transformer, attention, nlp]
+description: "RNN과 CNN을 완전히 버리고 오직 Self-Attention 메커니즘만으로 최고 성능을 달성한 혁신적인 Transformer 아키텍처 리뷰입니다."
+image:
+  path: /assets/img/posts/Attention/transformer-architecture.png
+  alt: Self-Attention과 RNN, CNN의 계산 복잡도 비교 표
 math: true
+mermaid: true
 ---
 
 ## 1. Abstract
