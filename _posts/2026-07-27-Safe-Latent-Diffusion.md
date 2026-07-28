@@ -1,7 +1,7 @@
 ---
 title: "논문 리뷰"
 date: 2026-07-27 20:17:00 +0900
-categories: [논문리뷰, Safe Latent Diffusion: Mitigating Inappropriate Degeneration in Diffusion Models]
+categories: [논문리뷰, Safe Latent Diffusion]
 tags: [diffusion, generative-ai, ai-safety, paper-review]
 math: true
 mermaid: true
