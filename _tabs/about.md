@@ -2,6 +2,7 @@
 layout: page
 title: About
 permalink: /about/
+order: 5
 ---
 
 # 안녕하세요, 오준서입니다.
